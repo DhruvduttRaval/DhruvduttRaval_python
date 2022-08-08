@@ -11,7 +11,10 @@
 <body>
 <center>
 		<h1>Login</h1>
-		<form name="login" method="post" action="">
+		{% if msg %}
+			<b style="color:blue;">{{msg}}</b>
+		{% endif %}
+		<form name="login" method="post" action="{% url 'login'%}">
 			{% csrf_token %}
 			<table>
 				

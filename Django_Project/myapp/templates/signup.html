@@ -11,7 +11,10 @@
 <body>
 <center>
 		<h1>Sign Up</h1>
-		<form name="signup" method="post" action="">
+		{% if msg %}
+			<b style="color:blue;">{{msg}}</b>
+		{% endif %}
+		<form name="signup" method="post" action="{% url 'signup' %}">
 			{% csrf_token %}
 			<table>
 				<tr>

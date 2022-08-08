@@ -1,6 +1,5 @@
 {% extends 'header.html' %}
 {% block content %}
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,6 +40,12 @@
 			</table>
 		</form>
 	</center>
+	<h1>Recent Contacts</h1>
+	<hr>
+	{% for i in contacts %}
+		Name:{{i.name}}<br>
+		Remarks:{{i.remarks}}<br><hr> 
+	{% endfor %}
 </body>
 </html>
 
