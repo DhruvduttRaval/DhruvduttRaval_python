@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import Contact,User
 # Create your views here.
 def index(request):
@@ -37,7 +37,8 @@ def signup(request):
 						mobile=request.POST['mobile'],
 						address=request.POST['address'],
 						gender=request.POST['gender'],
-						password=request.POST['password']
+						password=request.POST['password'],
+						profile_pic=request.FILES['profile_pic'],
 					)
 				msg="User Sign Up Successfully"
 				return render(request,'login.html',{'msg':msg})
@@ -56,6 +57,7 @@ def login(request):
 				)
 			request.session['email']=user.email
 			request.session['fname']=user.fname
+			request.session['profile_pic']=user.profile_pic.url
 			return render(request,'index.html')
 		except:
 			msg="Email & Password Is Incorrect"
@@ -70,3 +72,24 @@ def logout(request):
 		return render(request,'login.html')
 	except:
 		return render(request,'login.html')
+
+def change_password(request):
+	if request.method=="POST":
+		user=User.objects.get(email=request.session['email'])
+		if user.password==request.POST['old_password']:
+			if request.POST['new_password']==request.POST['cnew_password']:
+				user.password=request.POST['new_password']
+				user.save()
+				return redirect('logout')
+			else:
+				msg="New Password & Confirm New Password Does Not Matched"
+				return render(request,'change_password.html',{'msg':msg})
+		else:
+			msg="Old Password Does Not Matched"
+			return render(request,'change_password.html',{'msg':msg})
+	else:	
+		return render(request,'change_password.html')
+
+def profile(request):
+	user=User.objects.get(email=request.session['email']) 
+	return render(request,'profile.html',{'user':user}) 
