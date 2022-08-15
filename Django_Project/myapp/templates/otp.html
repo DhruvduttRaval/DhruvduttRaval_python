@@ -10,31 +10,26 @@
 </head>
 <body>
 <center>
-		<h1>Login</h1>
+		<h1>Enter OTP</h1>
 		{% if msg %}
 			<b style="color:blue;">{{msg}}</b>
 		{% endif %}
-		<form name="login" method="post" action="{% url 'login'%}">
+		<form name="otp" method="post" action="{% url 'verify_otp'%}">
 			{% csrf_token %}
 			<table>
-				
 				<tr>
-					<td>Email</td>
-					<td><input type="text" name="email"></td>
+					<td><input type="hidden" name="otp" value="{{otp}}"></td>
+					<td><input type="hidden" name="email" value="{{email}}"></td>
+				</tr>
+				<tr>
+					<td>Enter OTP</td>
+					<td><input type="text" name="uotp"></td>
 				</tr>
 				
 				<tr>
-					<td>Password</td>
-					<td><input type="password" name="password"></td>
-				</tr>
-				
-				<tr>
-					<td>
-						<input type="submit" value="Login" class="btn btn-primary">
+					<td colspan="2" align="center">
+						<input type="submit" value="Verify OTP" class="btn btn-primary">
 					</td> 
-					<td>
-						<a href="{% url 'forgot_password' %}"><input type="button" value="Forgot Password" class="btn btn-primary"> </a>
-					</td>
 				</tr>
 			</table>
 		</form>

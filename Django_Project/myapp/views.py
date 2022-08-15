@@ -1,5 +1,11 @@
 from django.shortcuts import render,redirect
 from .models import Contact,User
+
+from django.conf import settings
+from django.core.mail import send_mail
+import random
+
+
 # Create your views here.
 def index(request):
 	return render(request,'index.html')
@@ -92,4 +98,63 @@ def change_password(request):
 
 def profile(request):
 	user=User.objects.get(email=request.session['email']) 
-	return render(request,'profile.html',{'user':user}) 
+	if request.method=='POST':
+		user.fname=request.POST['fname']
+		user.lname=request.POST['lname']
+		user.mobile=request.POST['mobile']
+		user.address=request.POST['address']
+		user.gender=request.POST['gender']
+		try :
+			user.profile_pic=request.FILES['profile_pic']
+		except:
+			pass
+		user.save()
+		request.session['profile_pic']=user.profile_pic.url
+		msg="Profile Update Successfully"
+		return render(request,'profile.html',{'user':user,'msg':msg}) 
+	else:
+		return render(request,'profile.html',{'user':user}) 
+
+def forgot_password(request):
+	if request.method=="POST":
+		try:
+			user=User.objects.get(email=request.POST['email'])
+			otp=random.randint(1000,9999)
+			subject = 'OTP For Forgot Password'
+			message = 'Hello' +user.fname+',Your OTP For Fogot Password Is '+str(otp)
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = [user.email, ]
+			send_mail( subject, message, email_from, recipient_list )
+			return render(request,'otp.html',{'otp':otp,'email':user.email})
+		except:
+			msg="Email Does Not Exists"
+			return render(request,'forgot_password.html',{'msg':msg})
+	else:
+		return render(request,'forgot_password.html')
+
+def verify_otp(request):
+	otp=request.POST['otp']
+	uotp=request.POST['uotp']
+	email=request.POST['email']
+
+	if otp==uotp:
+		return render(request,'new_password.html',{'email':email})
+	
+	else:
+		msg="OTP Does Not Matched"
+		return render(request,'otp.html',{'otp':otp,'email':email,'msg':msg})
+
+def new_password(request):
+	email=request.POST['email']
+	np=request.POST['new_password']
+	cnp=request.POST['cnew_password']
+
+	if np==cnp:
+		user=User.objects.get(email=email)
+		user.password=np
+		user.save()
+		msg="Password Updated Successfully"
+		return render(request,'login.html',{'msg':msg})
+	else:
+		msg="New Password & Confirm New Password Does Not Matched"
+		return render(request,'new_password.html',{'email':email,'msg':msg})
