@@ -214,3 +214,30 @@ def seller_view_products(request):
 	seller=User.objects.get(email=request.session['email'])
 	products=Product.objects.filter(seller=seller)
 	return render(request,'seller_view_products.html',{'products':products})
+
+def seller_product_detail(request,pk):
+	product=Product.objects.get(pk=pk)
+	return render(request,'seller_product_detail.html',{'product':product})
+
+def seller_edit_product(request,pk):
+	product=Product.objects.get(pk=pk)
+	if request.method=="POST":
+		product.product_category=request.POST['product_category']
+		product.product_name=request.POST['product_name']
+		product.product_price=request.POST['product_price']
+		product.product_desc=request.POST['product_desc']
+		try:
+			product.product_image=request.FILES['product_image']
+		except:
+			pass
+
+		product.save()
+		msg="Product Updated Successfully"
+		return render(request,'seller_edit_product.html',{'product':product,'msg':msg})
+	else:
+		return render(request,'seller_edit_product.html',{'product':product})
+
+def seller_delete_product(request,pk):
+	product=Product.objects.get(pk=pk)
+	product.delete()
+	return redirect('seller_view_product')
