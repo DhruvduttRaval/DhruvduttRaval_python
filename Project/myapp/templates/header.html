@@ -54,7 +54,7 @@
 							<li><a href="{% url 'logout' %}"><i class="fa fa-user-o"></i> Logout({{request.session.fname}})</a></li>
 						{% else %}
 							<li><a href="{% url 'signup' %}"><i class="fa fa-user-o"></i> Sign Up</a></li>
-							<li><a href="{% url 'login' %}"><i class="fa fa-user-o"></i> Login</a></li>
+							<li><a href="{% url 'login' %}"><i class="fa fa-user-o"></i>Login</a></li>
 						{% endif %}
 						 
 					</ul>
@@ -69,7 +69,7 @@
 					<!-- row -->
 					<div class="row">
 						<!-- LOGO -->
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<div class="header-logo">
 								<a href="/" class="logo">
 									<img src="{% static 'img/logo.png' %}" alt="">
@@ -95,9 +95,17 @@
 						<!-- /SEARCH BAR -->
 						{% if request.session.email %}
 						<!-- ACCOUNT -->
-						<div class="col-md-3 clearfix">
+						<div class="col-md-4 clearfix">
 							<div class="header-ctn">
 								<!-- Wishlist -->
+								{% if request.session.profile_pic %}
+								<div>
+									<a href="{% url 'profile' %}">
+										<img src="{{request.session.profile_pic}}" height="40px" width="40px">
+										<span>Profile</span>
+									</a>
+								</div>
+								{% endif %}
 								<div>
 									<a href="#">
 										<i class="fa fa-heart-o"></i>
@@ -106,7 +114,7 @@
 									</a>
 								</div>
 								<!-- /Wishlist -->
-
+								{% endif %}
 								<!-- Cart -->
 								<div class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
@@ -134,10 +142,10 @@
 												<div class="product-body">
 													<h3 class="product-name"><a href="#">product name goes here</a></h3>
 													<h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
-												</div>
-												<button class="delete"><i class="fa fa-close"></i></button>
 											</div>
+												<button class="delete"><i class="fa fa-close"></i></button>
 										</div>
+									</div>
 										<div class="cart-summary">
 											<small>3 Item(s) selected</small>
 											<h5>SUBTOTAL: $2940.00</h5>
@@ -161,7 +169,6 @@
 							</div>
 						</div>
 						<!-- /ACCOUNT -->
-						{% endif %}
 					</div>
 					<!-- row -->
 				</div>
