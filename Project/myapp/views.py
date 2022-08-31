@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import User,Product
+from .models import User,Product,Wishlist
 from django.conf import settings
 from django.core.mail import send_mail
 import random
@@ -7,12 +7,22 @@ import random
 
 # Create your views here.
 def index(request):
-	return render(request,'index.html')
+	user=User()
+	try:
+		user=User.objects.get(email=request.session['email'])
+		if user.usertype=='user':
+			return render(request,'index.html')
+		else:
+			return render(request,'seller_index.html')
+	except:
+		return render(request,'index.html')
+
 def seller_index(request):
 	return render(request,'seller_index.html')
 
 def products(request):
-	return render(request,'store.html')
+	products=Product.objects.all()
+	return render(request,'store.html',{'products':products})
 
 def checkout(request):
 	return render(request,'checkout.html')
@@ -241,3 +251,18 @@ def seller_delete_product(request,pk):
 	product=Product.objects.get(pk=pk)
 	product.delete()
 	return redirect('seller_view_product')
+
+def product_details(request,pk):
+	product=Product.objects.get(pk=pk)
+	return render(request,'product_details.html',{'product':product})
+
+def add_to_wishlist(request,pk):
+	product=Product.objects.get(pk=pk)
+	user=User.objects.get(email=request.session['email'])
+	Wishlist.objects.create(product=product,user=user)
+	return redirect('wishlist')
+
+def wishlist(request):
+	user=User.objects.get(email=request.session['email'])
+	wishlists=Wishlist.objects.filter(user=user)
+	return render(request,'wishlist.html',{'wishlists':wishlists})
