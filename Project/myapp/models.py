@@ -15,8 +15,8 @@ class User(models.Model):
 	profile_pic=models.ImageField(upload_to="profile_pic/")
 	usertype=models.CharField(max_length=100,default="user")
 
-def __str__(self):
-	return self.fname+" "+self.lname
+	def __str__(self):
+		return self.fname +" "+ self.lname
 
 class Product(models.Model):
 	CHOICE=(

@@ -27,7 +27,7 @@
 						</div>
 					</div>
 					<!-- /section title -->
-							<div class="products-tabs" style="width:1900px;margin-left: -335px;">
+							<div class="products-tabs" style="width:2300px;margin-left:-550px;">
 								<!-- tab -->
 								<div id="tab1" class="tab-pane active">
 									<div class="products-slick" data-nav="#slick-nav-1">
@@ -50,7 +50,11 @@
 											{% if request.session.email %}
 											<div class="add-to-cart">
 												<a href="#"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Add To Cart</button></a>
-												<a href="{% url 'add_to_wishlist' pk=product.pk %}"><button class="add-to-cart-btn"><i class="fa fa-heart"></i>Add To Wishlist</button></a>
+												{% if wishlist_flag == False %}
+													<a href="{% url 'add_to_wishlist' pk=product.pk %}"><button class="add-to-cart-btn"><i class="fa fa-heart"></i>Add To Wishlist</button></a>
+												{% else %}
+													<a href="{% url 'remove_from_wishlist' pk=product.pk %}"><button class="add-to-cart-btn"><i class="fa fa-heart"></i>Remove From Wishlist</button></a> 
+												{% endif %}
 											</div>
 											{% else %}
 											<div class="add-to-cart">

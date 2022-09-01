@@ -110,7 +110,11 @@
 									<a href="{% url 'wishlist' %}">
 										<i class="fa fa-heart-o"></i>
 										<span>Your Wishlist</span>
-										<div class="qty">2</div>
+										{% if request.session.wishlist_count > 0 %}
+											<div class="qty">
+												{{request.session.wishlist_count}}
+											</div>
+										{% endif %}
 									</a>
 								</div>
 								<!-- /Wishlist -->
@@ -188,10 +192,9 @@
 					<ul class="main-nav nav navbar-nav">
 						<li class="active"><a href="/">Home</a></li>
 						<li><a href="{% url 'products' %}">All Products</a></li>
-						<li><a href="#">Laptops</a></li>
-						<li><a href="#">Smartphones</a></li>
-						<li><a href="#">Cameras</a></li>
-						<li><a href="#">Accessories</a></li>
+						<li><a href="{% url 'by_category' pc='Laptop' %}">Laptops</a></li>
+						<li><a href="{% url 'by_category' pc='Camera' %}">Cameras</a></li>
+						<li><a href="{% url 'by_category' pc='Accessories' %}">Accessories</a></li>
 					</ul>
 					<!-- /NAV -->
 				</div>
@@ -201,7 +204,7 @@
 		</nav>
 		<!-- /NAVIGATION -->
 
-		{% block content%}
+		{% block content %}
 		{% endblock %}
 		<!-- FOOTER -->
 		<footer id="footer">
