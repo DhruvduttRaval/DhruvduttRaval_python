@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import User,Product,Wishlist
+from .models import User,Product,Wishlist,Cart
 from django.conf import settings
 from django.core.mail import send_mail
 import random
@@ -25,7 +25,12 @@ def products(request):
 	return render(request,'store.html',{'products':products})
 
 def checkout(request):
-	return render(request,'checkout.html')
+	net_price=0
+	user=User.objects.get(email=request.session['email'])
+	carts=Cart.objects.filter(user=user)
+	for i in carts:
+		net_price=net_price+i.total_price
+	return render(request,'checkout.html',{'carts':carts,'user':user,'net_price':net_price})
 
 def signup(request):
 	if request.method=="POST":
@@ -68,6 +73,9 @@ def login(request):
 				request.session['profile_pic']=user.profile_pic.url
 				wishlists=Wishlist.objects.filter(user=user)
 				request.session['wishlist_count']=len(wishlists)
+				carts=Cart.objects.filter(user=user)
+				request.session['cart_count']=len(carts)
+				#request.session['carts']=carts
 				return render(request,'index.html')
 			else:
 				request.session['email']=user.email
@@ -256,6 +264,7 @@ def seller_delete_product(request,pk):
 
 def product_details(request,pk):
 	wishlist_flag=False
+	cart_flag=False
 	product=Product.objects.get(pk=pk)
 	user=User.objects.get(email=request.session['email'])
 	try:
@@ -263,7 +272,12 @@ def product_details(request,pk):
 		wishlist_flag=True
 	except:
 		pass
-	return render(request,'product_details.html',{'product':product,'wishlist_flag':wishlist_flag})
+	try:
+		Cart.objects.get(user=user,product=product)
+		cart_flag=True
+	except:
+		pass
+	return render(request,'product_details.html',{'product':product,'wishlist_flag':wishlist_flag,'cart_flag':cart_flag})
 
 def add_to_wishlist(request,pk):
 	product=Product.objects.get(pk=pk)
@@ -284,6 +298,43 @@ def remove_from_wishlist(request,pk):
 	wishlist.delete()
 	return redirect('wishlist')
 
-def by_category(request,pc):
+def by_category(request,pk):
 	products=Product.objects.filter(product_category=pc)
 	return render(request,'by_category.html',{'products':products})
+
+def add_to_cart(request,pk):
+	product=Product.objects.get(pk=pk)
+	user=User.objects.get(email=request.session['email'])
+	Cart.objects.create(
+			user=user,
+			product=product,
+			product_price=product.product_price,
+			total_price=product.product_price
+		)
+	return redirect('cart')
+
+def cart(request):
+	net_price=0
+	user=User.objects.get(email=request.session['email'])
+	carts=Cart.objects.filter(user=user)
+	request.session['cart_count']=len(carts)
+	#request.session['carts']=carts
+	for i in carts:
+		net_price=net_price+i.total_price
+	return render(request,'cart.html',{'carts':carts,'net_price':net_price})
+
+def remove_from_cart(request,pk):
+	user=User.objects.get(email=request.session['email'])
+	product=Product.objects.get(pk=pk)
+	cart=Cart.objects.get(user=user,product=product)
+	cart.delete()
+	return redirect('cart')
+
+def change_qty(request,pk):
+	cart=Cart.objects.get(pk=pk)
+	product_qty=request.POST['product_qty']
+	cart.product_qty=product_qty
+	cart.total_price=cart.product_price*int(product_qty)
+	cart.save()
+	return redirect('cart')
+

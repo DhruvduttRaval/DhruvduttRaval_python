@@ -24,4 +24,8 @@ urlpatterns = [
     path('wishlist/',views.wishlist,name='wishlist'),
     path('remove_from_wishlist/<int:pk>/',views.remove_from_wishlist,name='remove_from_wishlist'),
     path('by_category/<str:pc>/',views.by_category,name='by_category'),
+    path('add_to_cart/<int:pk>/',views.add_to_cart,name='add_to_cart'),
+    path('cart/',views.cart,name='cart'),
+    path('remove_from_cart/<int:pk>/',views.remove_from_cart,name='remove_from_cart'),
+    path('change_qty/<int:pk>/',views.change_qty,name='change_qty'),
 ]
