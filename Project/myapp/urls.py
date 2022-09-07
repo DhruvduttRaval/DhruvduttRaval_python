@@ -28,4 +28,6 @@ urlpatterns = [
     path('cart/',views.cart,name='cart'),
     path('remove_from_cart/<int:pk>/',views.remove_from_cart,name='remove_from_cart'),
     path('change_qty/<int:pk>/',views.change_qty,name='change_qty'),
+    path('pay/', views.initiate_payment, name='pay'),
+    path('callback/',views.callback, name='callback'),
 ]

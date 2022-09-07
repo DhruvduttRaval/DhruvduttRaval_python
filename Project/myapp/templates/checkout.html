@@ -141,7 +141,12 @@
 								I've read and accept the <a href="#">terms & conditions</a>
 							</label>
 						</div>
-						<a href="#" class="primary-btn order-submit">Place order</a>
+						
+						<form method="post" action="{% url 'pay' %}">
+							{% csrf_token %}
+							<input type="hidden" name="amount" value="{{net_price}}">
+							<input type="submit" value="Proceed To Pay" class="primary-btn order-submit">
+						</form>
 					</div>
 					<!-- /Order Details -->
 				</div>
