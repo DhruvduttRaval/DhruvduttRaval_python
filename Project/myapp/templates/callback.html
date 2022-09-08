@@ -1,3 +1,6 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
 <!DOCTYPE html>
 <head>
     <title>Callback</title>
@@ -19,6 +22,8 @@
     BANKNAME: {{ BANKNAME }}                        <br>
     BIN_NAME: {{ BIN_NAME }}                        <br>
     PAYMENTMODE: {{ PAYMENTMODE }}                  <br>
-    CHECKSUMHASH: {{ CHECKSUMHASH }}
+    CHECKSUMHASH: {{ CHECKSUMHASH }}                <br><br>
+<h2><a href="{% url 'index' %}">Back To Home</a></h2>
 </body>
 </html>
+{% endblock %}

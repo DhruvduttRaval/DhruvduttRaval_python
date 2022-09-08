@@ -5,9 +5,16 @@ from django.core.mail import send_mail
 import random
 from .paytm import generate_checksum, verify_checksum
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
 
 # Create your views here.
+
+def validate_email(request):
+	email=request.GET.get('email')
+	data={
+		'is_taken':User.objects.filter(email__iexact=email).exists()
+	}
+	return JsonResponse(data)
 
 def initiate_payment(request):
 	user=User.objects.get(email=request.session['email'])
@@ -36,6 +43,12 @@ def initiate_payment(request):
 	checksum = generate_checksum(paytm_params, merchant_key)
 	transaction.checksum = checksum
 	transaction.save()
+	carts=Cart.objects.filter(user=user,payment_status="pending")
+	for i in carts:
+		i.payment_status="paid"
+		i.save()
+	carts=Cart.objects.filter(user=user,payment_status="pending")
+	request.session['cart_count']=len(carts)
 	paytm_params['CHECKSUMHASH'] = checksum
 	print('SENT: ', checksum)
 	return render(request, 'redirect.html', context=paytm_params)
@@ -83,9 +96,10 @@ def products(request):
 def checkout(request):
 	net_price=0
 	user=User.objects.get(email=request.session['email'])
-	carts=Cart.objects.filter(user=user)
-	for i in carts:
+	carts=Cart.objects.filter(user=user,payment_status="pending")
+	for i in carts :
 		net_price=net_price+i.total_price
+	request.session['cart_count']=len(carts)
 	return render(request,'checkout.html',{'carts':carts,'user':user,'net_price':net_price})
 
 def signup(request):
@@ -372,7 +386,7 @@ def add_to_cart(request,pk):
 def cart(request):
 	net_price=0
 	user=User.objects.get(email=request.session['email'])
-	carts=Cart.objects.filter(user=user)
+	carts=Cart.objects.filter(user=user,payment_status="pending")
 	request.session['cart_count']=len(carts)
 	#request.session['carts']=carts
 	for i in carts:
@@ -394,3 +408,7 @@ def change_qty(request,pk):
 	cart.save()
 	return redirect('cart')
 
+def myorder(request):
+	user=User.objects.get(email=request.session['email'])
+	carts=Cart.objects.filter(user=user,payment_status="paid")
+	return render(request,'myorder.html',{'carts':carts})

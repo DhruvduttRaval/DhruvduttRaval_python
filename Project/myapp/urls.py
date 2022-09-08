@@ -30,4 +30,6 @@ urlpatterns = [
     path('change_qty/<int:pk>/',views.change_qty,name='change_qty'),
     path('pay/', views.initiate_payment, name='pay'),
     path('callback/',views.callback, name='callback'),
+    path('myorder/',views.myorder,name='myorder'),
+    path('ajax/validate_email/',views.validate_email,name='validate_email')
 ]

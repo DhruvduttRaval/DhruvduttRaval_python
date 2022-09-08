@@ -49,6 +49,7 @@ class Cart(models.Model):
 	product_qty=models.PositiveIntegerField(default=1)
 	product_price=models.PositiveIntegerField()
 	total_price=models.PositiveIntegerField()
+	payment_status=models.CharField(max_length=100,default="pending")
 	def __str__(self):
 		return self.user.fname+"-"+self.product.product_name
 
